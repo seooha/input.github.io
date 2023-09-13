@@ -1,0 +1,183 @@
+<!-- 실종 정보 입력 기능의 웹사이트 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>Joo_Hyeong's Free Website</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Hahmlet:wght@300&display=swap');
+        .dow{
+            font-family: "Gowun Dodum";
+            font-size: 20px;
+        }
+        .mow{
+            font-family: "Gowun Dodum";
+            font-size: 15px;
+        }
+
+
+        body {
+            background-color: rgb(228, 242, 242);
+        }
+        h1 {
+            font-weight: bold;
+        }
+        .container {
+            text-align: center;
+            margin: 50px auto;
+            max-width: 600px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        select {
+            padding: 10px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        .send-button {
+            background-color: #4ad6b891;
+            color: rgb(255, 255, 255);
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+        .send-button:hover {
+            background-color: #33bcdff7;
+        }
+        label {
+            display: block;
+        }
+        textarea {
+            padding: 10px;
+            width: 100%;
+            height: 150px;
+            margin: 10px 0;
+        }
+        #record {
+            text-align: left;
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 200px;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+<body>
+    <p class="dow"> 
+        실종 아동 찾기 
+        <p class="mow"> 
+            광주과학고
+            정보 기초 R&E
+        </p>
+        <p class="mow">
+            권서하, 남지윤, 이주형
+        </p>
+    </p>
+    <div class="container">
+        <h1 class="dow" >실종 정보 입력</h1>
+        <form id="missing-form" action="#" onsubmit="submitForm(); return false;">
+            <label for="name" class="dow">이름:</label>
+            <input type="text" id="name" placeholder="이름을 입력하세요" class="mow">
+            <p>
+                
+            </p>
+            <label for="year" class="dow">실종 당시의 연도 :</label>
+            <p>
+
+            </p>
+            <input type="number" id="year" placeholder="연도를 입력하세요" min="1" step="1" class="mow">
+            <p>
+                
+            </p>
+            <label for="age" class="dow">실종 당시의 나이:</label>
+            <p>
+
+            </p>
+            <input type="number" id="age" placeholder="나이를 입력하세요" min="1" step="1" class="mow">
+            <p>
+                
+            </p>
+            <label for="region" class="dow">실종 지역:</label>
+            <select id="region" class="mow">
+                <option value="광주">광주</option>
+                <option value="서울">서울</option>
+                <option value="부산">부산</option>
+                <option value="대구">대구</option>
+                <option value="인천">인천</option>
+                <option value="대전">대전</option>
+                <option value="울산">울산</option>
+                <option value="세종">세종</option>
+                <option value="경기">경기</option>
+                <option value="강원">강원</option>
+                <option value="충북">충북</option>
+                <option value="충남">충남</option>
+                <option value="전북">전북</option>
+                <option value="전남">전남</option>
+                <option value="경북">경북</option>
+                <option value="경남">경남</option>
+                <option value="제주">제주</option>
+            </select>
+            <p>
+
+            </p>
+            <label for="missing-info" class="dow"> 실종 정보 </label>
+            <textarea id="missing-info" placeholder="실종 정보를 자세히 입력하세요" class="mow"></textarea>
+            <p> 
+
+            </p>
+            <label for="image" class="dow">이미지</label>
+            <p>
+
+            </p>
+            <input type="file" id="image" name="image" accept="image/*">
+            <p>
+                
+            </p>
+            <button type="submit" class="send-button">Submit</button>
+            <p>
+                
+            </p>
+        </form>
+        <div id="image-preview"></div>
+        
+        <h2 class="dow">Record</h2>
+        <div id="record"></div>
+    </div>
+    <script class="mow">
+        const records = [];
+        
+        function submitForm() {
+            const name = document.getElementById('name').value;
+            const year = document.getElementById('year').value;
+            const age = document.getElementById('age').value;
+            const region = document.getElementById('region').value;
+            const missingInfo = document.getElementById('missing-info').value;
+            const image = document.getElementById('image').files[0];
+            const currentTime = new Date();
+            const plusage = Number(age) + Number(currentTime.getFullYear()) - Number(year);
+
+
+
+            if (name && year && age && region && missingInfo && image) {
+                records.push({ name, year, age, region, missingInfo, image });
+
+                alert('실종 정보를 제출하였습니다');
+                document.getElementById('missing-form').reset();
+
+                const recordDiv = document.getElementById('record');
+                const newRecord = document.createElement('div');
+                newRecord.innerHTML = `<strong>이름:</strong> ${name}<br><strong> 실종 당시의 나이: </strong>${age} <br><strong> 실종년도: </strong>${year} <br><strong>지역:</strong> ${region} <br><strong>실종 정보: </strong>${missingInfo} <br><strong>노화시킬 년도 </strong>${Number(plusage)}<br><strong>신고시각: </strong> ${currentTime.toLocaleString()}<img src="${URL.createObjectURL(image)}" style="max-width: 100%;"><hr> `;
+                recordDiv.appendChild(newRecord);
+            }
+        }
+        window.addEventListener('beforeunload', function (e) {
+            if (records.length > 0) {
+                e.returnValue = "R"
+            }
+        });
+    </script>
+</body>
+</html>
