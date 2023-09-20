@@ -1,9 +1,8 @@
-<!-- 실종 정보 입력 기능의 웹사이트 -->
 
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>Joo_Hyeong's Free Website</title>
+    <title>실종아동입력</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Hahmlet:wght@300&display=swap');
         .dow{
@@ -14,8 +13,6 @@
             font-family: "Gowun Dodum";
             font-size: 15px;
         }
-
-
         body {
             background-color: rgb(228, 242, 242);
         }
@@ -63,6 +60,7 @@
             height: 200px;
             overflow-y: scroll;
         }
+
     </style>
 </head>
 <body>
@@ -73,7 +71,7 @@
             정보 기초 R&E
         </p>
         <p class="mow">
-            권서하, 남지윤, 이주형
+            이주형
         </p>
     </p>
     <div class="container">
@@ -81,25 +79,13 @@
         <form id="missing-form" action="#" onsubmit="submitForm(); return false;">
             <label for="name" class="dow">이름:</label>
             <input type="text" id="name" placeholder="이름을 입력하세요" class="mow">
-            <p>
-                
-            </p>
+            <p></p>
             <label for="year" class="dow">실종 당시의 연도 :</label>
-            <p>
-
-            </p>
             <input type="number" id="year" placeholder="연도를 입력하세요" min="1" step="1" class="mow">
-            <p>
-                
-            </p>
+            <p></p>
             <label for="age" class="dow">실종 당시의 나이:</label>
-            <p>
-
-            </p>
             <input type="number" id="age" placeholder="나이를 입력하세요" min="1" step="1" class="mow">
-            <p>
-                
-            </p>
+            <p></p>
             <label for="region" class="dow">실종 지역:</label>
             <select id="region" class="mow">
                 <option value="광주">광주</option>
@@ -120,31 +106,24 @@
                 <option value="경남">경남</option>
                 <option value="제주">제주</option>
             </select>
-            <p>
-
-            </p>
+            <p></p>
             <label for="missing-info" class="dow"> 실종 정보 </label>
             <textarea id="missing-info" placeholder="실종 정보를 자세히 입력하세요" class="mow"></textarea>
-            <p> 
-
-            </p>
+            <p></p>
             <label for="image" class="dow">이미지</label>
-            <p>
-
-            </p>
             <input type="file" id="image" name="image" accept="image/*">
-            <p>
-                
-            </p>
+            <p></p>
             <button type="submit" class="send-button">Submit</button>
-            <p>
-                
-            </p>
+            <p></p>
         </form>
         <div id="image-preview"></div>
         
         <h2 class="dow">Record</h2>
         <div id="record"></div>
+
+        <p class="mow">
+            contact us: <a href="https://seooha.github.io/">click!</a>
+        </p>
     </div>
     <script class="mow">
         const records = [];
@@ -159,25 +138,41 @@
             const currentTime = new Date();
             const plusage = Number(age) + Number(currentTime.getFullYear()) - Number(year);
 
-
-
             if (name && year && age && region && missingInfo && image) {
                 records.push({ name, year, age, region, missingInfo, image });
 
-                alert('실종 정보를 제출하였습니다');
+                const textData = `이름: ${name}\n실종 당시의 나이: ${age}\n실종년도: ${year}\n지역: ${region}\n실종 정보: ${missingInfo}\n노화시킬 년도: ${Number(plusage)}\n신고시각: ${currentTime.toLocaleString()}\n\n`;
+                const blob = new Blob([textData], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+
+                const imageBlob = new Blob([image], { type: image.type });
+                const imageUrl = URL.createObjectURL(imageBlob);
+
+                const zip = new JSZip();
+                zip.file(`${name}_missing_info.txt`, textData);
+                zip.file(`${name}_missing_image${image.type.replace('image/', '.')}`, imageBlob);
+
+                zip.generateAsync({ type: 'blob' }).then(function(content) {
+                    saveAs(content, `${name}_missing_info.zip`);
+                });
+
+                alert('실종 정보와 이미지를 제출하였습니다');
                 document.getElementById('missing-form').reset();
 
                 const recordDiv = document.getElementById('record');
                 const newRecord = document.createElement('div');
-                newRecord.innerHTML = `<strong>이름:</strong> ${name}<br><strong> 실종 당시의 나이: </strong>${age} <br><strong> 실종년도: </strong>${year} <br><strong>지역:</strong> ${region} <br><strong>실종 정보: </strong>${missingInfo} <br><strong>노화시킬 년도 </strong>${Number(plusage)}<br><strong>신고시각: </strong> ${currentTime.toLocaleString()}<img src="${URL.createObjectURL(image)}" style="max-width: 100%;"><hr> `;
+                newRecord.innerHTML = `<strong>이름:</strong> ${name}<br><strong> 실종 당시의 나이: </strong>${age} <br><strong> 실종년도: </strong>${year} <br><strong>지역:</strong> ${region} <br><strong>실종 정보: </strong>${missingInfo} <br><strong>노화시킬 년도 </strong>${Number(plusage)}<br><strong>신고시각: </strong> ${currentTime.toLocaleString()}<br><strong>이미지:</strong> <img src="${imageUrl}" style="max-width: 100%;"><hr> `;
                 recordDiv.appendChild(newRecord);
             }
         }
+
         window.addEventListener('beforeunload', function (e) {
             if (records.length > 0) {
                 e.returnValue = "R"
             }
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </body>
 </html>
